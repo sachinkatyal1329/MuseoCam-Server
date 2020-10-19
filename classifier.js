@@ -21,14 +21,14 @@ async function classifyImage(urlPath) {
         threshold: 0.6,
     }
 
-    const hi = await visualRecognition.classify(classifyParams).then(response => {
+    const response = await visualRecognition.classify(classifyParams).then(response => {
         const classifiedImages = response.result;
         return JSON.stringify(classifiedImages, null, 2)
     }).catch(err => {
         return 'error: ' + err
     })
 
-    return hi
+    return response
 }
 
 classifyImage('./images/0.jpg').then(response => {
