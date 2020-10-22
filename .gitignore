@@ -1,5 +1,7 @@
 .env.*
 
+.env
+
 images/
 
 node_modules/
@@ -15,3 +17,9 @@ node_modules/
 
 # TypeScript v1 declaration files
 typings/
+
+image_processing/
+
+key.json
+
+.DS_Store
