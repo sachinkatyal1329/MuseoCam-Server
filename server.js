@@ -14,7 +14,7 @@ admin.initializeApp({
 const db = admin.firestore()
 
 const app = express()
-const port = process.env.PORT | 5000
+const port = process.env.PORT
 app.use(cors({ origin: true}))
 app.use(express.json())
 
@@ -46,9 +46,9 @@ app.route('/artifact')
         console.log("EDIT REQUEST")
     })
     .delete((req, res) => {
-        //delete artifact
-        console.log('DELETE REQUEST')
-        res.send('success')
+        console.log(req.body)
+        res.send(req.body)
+        console.log("DELETE REQUEST")
     })
 
 app.get('/artifact/:id?', (req, res) => {
@@ -56,6 +56,7 @@ app.get('/artifact/:id?', (req, res) => {
     console.log(req.query.id)
     console.log('GET REQUEST ' + req.query.id)
 })
+
 
 
 app.listen(port, () => {console.log(`Server running on port ${port}`)})
