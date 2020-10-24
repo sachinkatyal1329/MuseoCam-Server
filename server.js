@@ -41,6 +41,15 @@ app.route('/artifact')
 
     })
     .put((req, res) => {
+        const description = req.body['description']
+        const id = req.body['objId']
+
+        db.collection('artifacts').doc(id).set({
+            description
+        }).then(() => {
+            console.log("EDited documents")
+        })
+
         console.log(req.body)
         res.send(req.body)
         console.log("EDIT REQUEST")
