@@ -45,11 +45,6 @@ app.route('/artifact')
         res.send(req.body)
         console.log("EDIT REQUEST")
     })
-    .delete((req, res) => {
-        console.log(req.body)
-        res.send(req.body)
-        console.log("DELETE REQUEST")
-    })
 
 app.get('/artifact/:id?', (req, res) => {
     res.json({id: req.query.id})
@@ -57,6 +52,22 @@ app.get('/artifact/:id?', (req, res) => {
     console.log('GET REQUEST ' + req.query.id)
 })
 
+app.delete('/artifact/:id?', (req, res) => {
+    db.collection('artifacts').doc(req.query.id).delete().then(() => {
+        console.log("Document deleted")
+    })
+    console.log(req.query.id)
+    res.send(req.query.id)
+    console.log("DELETE REQUEST")
+})
+
+
+
+// app.delete('/artifact/:id?', (req, res) => {
+//     res.json({id: req.query.id})
+//     console.log(req.query.id)
+//     console.log("DELETE REQUEST")
+// })
 
 
 app.listen(port, () => {console.log(`Server running on port ${port}`)})
