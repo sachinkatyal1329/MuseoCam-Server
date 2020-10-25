@@ -1,4 +1,4 @@
-'user-strict'
+'use-strict'
 require('custom-env').env('process')
 
 const express = require('express')
@@ -18,39 +18,70 @@ const port = process.env.PORT
 app.use(cors({ origin: true}))
 app.use(express.json())
 
+
+let tasks = []
+
 cron.schedule('* * * * *', () => {
     console.log("running task every minute")
+    let description = undefined
+    let id = undefined
+
+    for (const task of tasks) {
+        switch (task['task']) {
+            case 'post':
+                console.log(task)
+                 description = task['description']
+                 id = task['id']
+
+                db.collection('artifacts').doc(id).set({
+                    description
+                }).then(() => {
+                    console.log("Uploaded artifact")
+                })
+                break;
+            case 'put':
+                 description = task['description']
+                 id = task['id']
+
+                db.collection('artifacts').doc(id).set({
+                    description
+                }).then(() => {
+                    console.log("EDited documents")
+                })
+
+                break;
+            case 'delete':
+                db.collection('artifacts').doc(task['id']).delete().then(() => {
+                    console.log("Document deleted: " + task['id'])
+                })
+                break;
+        }
+    }
+
+    tasks = []
 })
 
 app.route('/artifact')
     .post((req, res) => {
         console.log(req.body)
         res.json(req.body)
-        const description = req.body['description']
-        const id = req.body['objID']
+        console.log("HIJADSKDJSAL" + JSON.stringify(req.body['objId']))
 
-        db.collection('artifacts').doc(id).set({
-            description
-        }).then(() => {
-            console.log("successfully uploaded info")
-        }).catch(err => {
-            console.log("Error uploading info : " + err)
+        tasks.push({
+            task: "post",
+            id: req.body['objId'],
+            description: req.body['description']
         })
 
         console.log("POST REQUEST")
 
     })
     .put((req, res) => {
-        const description = req.body['description']
-        const id = req.body['objId']
-
-        db.collection('artifacts').doc(id).set({
-            description
-        }).then(() => {
-            console.log("EDited documents")
+        tasks.push({
+            task: "put",
+            id: req.body.objId,
+            description: req.body.description
         })
-
-        console.log(req.body)
         res.send(req.body)
         console.log("EDIT REQUEST")
     })
@@ -62,10 +93,10 @@ app.get('/artifact/:id?', (req, res) => {
 })
 
 app.delete('/artifact/:id?', (req, res) => {
-    db.collection('artifacts').doc(req.query.id).delete().then(() => {
-        console.log("Document deleted")
+    tasks.push({
+        task: "delete",
+        id: req.query.id
     })
-    console.log(req.query.id)
     res.send(req.query.id)
     console.log("DELETE REQUEST")
 })
